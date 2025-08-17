@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "net.petemc.apocalypsedrops.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ExampleMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "apocalypsedrops-refmap.json"
+}

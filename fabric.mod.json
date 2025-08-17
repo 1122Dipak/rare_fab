@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "apocalypsedrops",
+  "version": "1.0.1-1.21.3",
+  "name": "ApocalypseDrops",
+  "description": "This Mod add Zombie drops that will be quite useful in a Zombie-Apocalypse.",
+  "authors": [
+    "Pete MC Mods, mcmods.pete@gmail.com"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/zombie-apocalypse-drops",
+    "sources": "https://github.com/MC-Mods-Pete/ApocalypseDrops",
+    "issues": "https://github.com/MC-Mods-Pete/ApocalypseDrops/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/apocalypsedrops/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.petemc.apocalypsedrops.ApocalypseDrops"
+    ],
+    "client": [
+      "net.petemc.apocalypsedrops.ApocalypseDropsClient"
+    ],
+    "fabric-datagen": [
+      "net.petemc.apocalypsedrops.ApocalypseDropsDataGenerator"
+    ],
+    "modmenu": [
+      "net.petemc.apocalypsedrops.util.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "apocalypsedrops.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "\u003e\u003d0.16.7",
+    "minecraft": "\u003e\u003d1.21.3",
+    "java": "\u003e\u003d21",
+    "fabric-api": "*",
+    "cloth-config": "\u003e\u003d16.0.141"
+  },
+  "suggests": {
+    "modmenu": "\u003e\u003d12.0.0-beta.1",
+    "another-mod": "*"
+  },
+  "jars": [
+    {
+      "file": "META-INF/jars/cloth-config-fabric-16.0.141-fabric.jar"
+    }
+  ]
+}
