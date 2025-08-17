@@ -5,12 +5,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.LootCondition;
-import net.minecraft.loot.condition.RandomChanceWithLootingLootCondition;
+import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.function.LootingEnchantLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -21,39 +20,40 @@ public class RareDropsTweaker {
     public static void init(List<DropRule> rules) {
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
             for (DropRule rule : rules) {
-                // Identifier now requires namespace + path
+                // Ensure proper Identifier
                 Identifier entityId = Identifier.of(rule.entityId.contains(":") ? rule.entityId : "minecraft:" + rule.entityId);
-
                 EntityType<?> entityType = Registries.ENTITY_TYPE.getOrEmpty(entityId).orElse(null);
                 if (entityType == null) continue;
 
+                // Get default loot table for entity
                 Identifier expectedLootTable = EntityType.getLootTableId(entityType);
-
                 if (!expectedLootTable.equals(id)) continue;
 
                 Identifier itemId = Identifier.of(rule.itemId.contains(":") ? rule.itemId : "minecraft:" + rule.itemId);
                 Item item = Registries.ITEM.getOrEmpty(itemId).orElse(null);
                 if (item == null) continue;
 
+                // Base chance condition
                 List<LootCondition> conditions = new ArrayList<>();
-                // Updated API: use RandomChanceWithLootingLootCondition
-                conditions.add(RandomChanceWithLootingLootCondition.builder(rule.baseChance)
-                        .withLootingMultiplier(rule.lootingBonusPerLevel)
-                        .build());
+                conditions.add(RandomChanceLootCondition.builder(rule.baseChance).build());
 
+                // Build loot pool
                 LootPool.Builder pool = LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1.0f))
-                        .with(ItemEntry.builder(item).conditionally(conditions.get(0)));
+                        .with(ItemEntry.builder(item)
+                                .conditionally(conditions.get(0))
+                                .apply(LootingEnchantLootFunction.builder(rule.lootingBonusPerLevel)));
 
                 tableBuilder.pool(pool);
             }
         });
     }
 
+    // Simple class for JSON/config rules
     public static class DropRule {
-        public String entityId;
-        public String itemId;
-        public float baseChance;
-        public float lootingBonusPerLevel;
+        public String entityId;           // e.g., "zombie"
+        public String itemId;             // e.g., "iron_ingot"
+        public float baseChance;          // 0.0–1.0
+        public float lootingBonusPerLevel; // Extra chance per Looting level
     }
 }
